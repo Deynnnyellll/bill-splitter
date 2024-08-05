@@ -1,10 +1,11 @@
-import { navLinkContent } from '../constants';
-import { NavLink } from 'react-router-dom';
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+import { navLinkContent } from '../constants'
 
 const Navbar = () => {
   return (
     <nav className='fixed bottom-0 left-0 right-0 w-full px-3 py-2'>
-      <div className='w-full py-4 px-6 rounded-[52px] bg-darkTwo '>
+      <div className='w-full py-2 px-4 rounded-[52px] bg-darkTwo '>
         <ul className='flex justify-between items-center text-[24px] text-primaryThree'>
           {navLinkContent.map((nav) => (
             <li key={nav.id}>
