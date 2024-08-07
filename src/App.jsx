@@ -4,12 +4,16 @@ import './index.css'
 
 // Routes
 import Home from './components/Home'
+import CreateBill from './components/CreateBill'
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='home'>
+          <Route path='' element={<Home />}/>
+          <Route path='create-bill' element={<CreateBill />} />
+        </Route>
       </Routes>
       <Navbar />
     </>

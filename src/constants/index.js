@@ -6,7 +6,7 @@ const navIcons = [PiSquaresFourFill, PiReceiptFill, TiUser]
 export const navLinkContent = [
   {
     id: 'home',
-    path: '/',
+    path: '/home',
     logo: navIcons[0],
     title: 'Home'
   },
