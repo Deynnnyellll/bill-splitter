@@ -58,3 +58,21 @@ export const billLists = [
     count: 1
   }
 ]
+
+export const friends = [
+  {
+    id: 1,
+    name: 'Carl',
+    added: false
+  },
+  {
+    id: 2,
+    name: 'James',
+    added: false
+  },
+  {
+    id: 3,
+    name: 'Matthew',
+    added: false
+  },
+]

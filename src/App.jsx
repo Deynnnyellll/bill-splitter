@@ -6,6 +6,7 @@ import './index.css'
 import Home from './components/Home'
 import CreateBill from './components/CreateBill'
 import Receipt from './components/Receipt'
+import SelectFriends from './components/SelectFriends'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path='' element={<Home />}/>
           <Route path='create-bill' element={<CreateBill />} />
           <Route path='receipt' element={<Receipt />} />
+          <Route path='select-friends' element={<SelectFriends />} />
         </Route>
       </Routes>
       <Navbar />

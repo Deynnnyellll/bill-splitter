@@ -74,6 +74,7 @@ const Receipt = () => {
             <p className='text-[14px] text-primaryThree'>{`$${subtotal.toFixed(2)}`}</p>
           </li>
         </ul>
+        <button className='bg-darkOne text-lightOne mt-4 p-2 rounded-md text-center cursor-pointer w-full'>Split bill</button>
       </div>
     </div>
   )

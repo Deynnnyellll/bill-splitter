@@ -105,7 +105,7 @@ const CreateBill = () => {
         )}
       </div>
       {title && itemLists.length !== 0 ? (
-        <div className='mx-4 p-2 rounded-md bg-primaryThree text-center' onClick={handleSaveReceipt}>
+        <div className='mx-4 p-2 rounded-md bg-primaryThree text-center cursor-pointer select-none' onClick={handleSaveReceipt}>
           Next
         </div>
       ) : null}
