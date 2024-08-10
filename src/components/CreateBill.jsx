@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { GoArrowLeft, GoCheck } from "react-icons/go";
+import React, { useEffect, useState } from 'react'
+import { GoArrowLeft } from "react-icons/go";
 import { TiUserAdd } from "react-icons/ti";
 import { v4 as uuidv4 } from 'uuid';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import Additem from './AddItem';
 import Items from './Items';
@@ -14,8 +14,13 @@ const CreateBill = () => {
   const [addList, setAddlist] = useState(false)
   const [receipt, setReceipt] = useState({
     title: '',
-    receipt: null
+    itemLists: null
   })
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    localStorage.setItem('receipt', JSON.stringify(receipt))
+  }, [receipt])
 
   const handleAddList = () => {
     setAddlist(prev => !prev)
@@ -42,13 +47,15 @@ const CreateBill = () => {
     setItemLists(itemLists.filter((item) => item.id !== id))
   }
 
-  const handleSaveReceipt = () => {
-    !title && alert("no title inserted")
-    itemLists.length === 0 && alert("no item inserted")
+  const handleSaveReceipt = (event) => {
+    event.preventDefault();
     setReceipt({
       title: title,
-      receipt: itemLists
+      itemLists: itemLists
     })
+    setTimeout(() => {
+      navigate('../receipt')
+    }, 100)
   }
 
   return (
@@ -71,12 +78,14 @@ const CreateBill = () => {
         {itemLists.map((item) => (
           item.edited === true ? (
             <EditItem
+              key={item.id}
               item={item}
               toggleEditItem={handleEditItem}
               toggleEdit={handleToggle}
             />
           ) : (
             <Items
+              key={item.id}
               id={item.id}
               name={item.name}
               amount={item.amount}
@@ -95,9 +104,11 @@ const CreateBill = () => {
           </button>
         )}
       </div>
-      <Link to={'..'} className='mx-4 p-2 rounded-md bg-primaryThree text-center' onClick={handleSaveReceipt}>
-        Next
-      </Link>
+      {title && itemLists.length !== 0 ? (
+        <div className='mx-4 p-2 rounded-md bg-primaryThree text-center cursor-pointer select-none' onClick={handleSaveReceipt}>
+          Next
+        </div>
+      ) : null}
     </div>
   )
 }
