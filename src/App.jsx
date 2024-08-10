@@ -5,6 +5,7 @@ import './index.css'
 // Routes
 import Home from './components/Home'
 import CreateBill from './components/CreateBill'
+import History from './components/History';
 
 function App() {
   return (
@@ -13,6 +14,9 @@ function App() {
         <Route path='home'>
           <Route path='' element={<Home />}/>
           <Route path='create-bill' element={<CreateBill />} />
+        </Route>
+        <Route path='history'>
+          <Route path='' element={<History />}/>
         </Route>
       </Routes>
       <Navbar />
