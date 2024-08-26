@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { GoArrowLeft } from "react-icons/go";
 import { TiUserAdd } from "react-icons/ti";
@@ -15,6 +15,12 @@ const Receipt = () => {
   receipt.itemLists.map((item) => (
     subtotal += (item.amount * item.count)
   ))
+
+  const navigate = useNavigate();
+
+  const goToSplit = () => {
+    navigate('..//add-position');
+  }
 
   return (
     <div className='bg-primaryThree text-lightOne h-screen'>
@@ -74,7 +80,7 @@ const Receipt = () => {
             <p className='text-[14px] text-primaryThree'>{`$${subtotal.toFixed(2)}`}</p>
           </li>
         </ul>
-        <button className='bg-darkOne text-lightOne mt-4 p-2 rounded-md text-center cursor-pointer w-full'>Split bill</button>
+        <button className='bg-darkOne text-lightOne mt-4 p-2 rounded-md text-center cursor-pointer w-full' onClick={goToSplit}>Split bill</button>
       </div>
     </div>
   )

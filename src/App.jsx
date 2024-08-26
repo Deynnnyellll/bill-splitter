@@ -8,6 +8,7 @@ import CreateBill from './components/CreateBill'
 import Receipt from './components/Receipt'
 import SelectFriends from './components/SelectFriends'
 import History from './components/History';
+import AddPositions from './components/AddPositions';
 
 function App() {
   return (
@@ -22,8 +23,8 @@ function App() {
         <Route path='history'>
           <Route path='' element={<History />}/>
         </Route>
-        <Route path='history'>
-          <Route path='' element={<History />}/>
+        <Route path='add-position'>
+          <Route path='' element={<AddPositions />}/>
         </Route>
       </Routes>
       <Navbar />
