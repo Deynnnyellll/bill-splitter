@@ -19,7 +19,7 @@ const Receipt = () => {
   const navigate = useNavigate();
 
   const goToSplit = () => {
-    navigate('..//add-position');
+    navigate('../select-friends');
   }
 
   return (

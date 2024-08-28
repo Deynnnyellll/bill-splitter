@@ -2,6 +2,7 @@ import guyProfile from '/src/assets/images/boy icon.png';
 import girlProfile from '/src/assets/images/girl icon.png';
 import { RiDeleteBin6Fill, RiEdit2Fill } from "react-icons/ri";
 import { GoArrowLeft } from "react-icons/go";
+import { FaCheck } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'
@@ -43,24 +44,30 @@ const AddPositions = () => {
         },
     ]
 
-    const [option, setOption] = useState(false);
+    const [option, setOption] = useState([]);
 
-    const toggleOption = () => {
-        setOption(!option);
+
+    const toggleOption = (index) => {
+        setOption(option.map((option, i) => (i === index ? !option : option)))
     }
 
-    const increment = (id, num) => {
-        setCount(count.map(item => (
-            {...item,
-            items: item.items.map(item => (item.id === id ? {...item, num: num+1} : item))}
-        )))
-    }
-
-    const decrement = (id, num) => {
-        if(num > 0) {
+    const handleCount = (id, num, method) => {
+        if(method === "add") {
             setCount(count.map(item => (
                 {...item,
-                    items: item.items.map(item => (item.id === id ? {...item, num: num-1} : item))
+                    items: item.items.map(item => (item.id === id ? {...item, 
+                        num: item.count > num ? num+1 : num
+                    } : item)),
+                    totalCount: item.items.reduce((acc, item) => acc + item.num, 0)
+                }
+            )))
+        }
+        else {
+            setCount(count.map(item => (
+                {...item,
+                    items: item.items.map(item => (item.id === id ? {...item, 
+                        num: num > 0 ? num-1 : num} : item)),
+                    totalCount: item.items.reduce((acc, item) => acc + item.num, 0)
                 }
             )))
         }
@@ -68,16 +75,14 @@ const AddPositions = () => {
 
     useEffect(()=> {
         setCount(userBills.map((user) => (
-            {...user, 
-                items: user.items.map(user => ({...user, num: 0, id: uuidv4()}))
+            {...user,
+                items: user.items.map(item => ({...item, num: item.count, id: uuidv4(),
+                })), totalCount: user.items.reduce((acc, item) => acc + item.count, 0)
             }
         )))
-        console.log("Record changed")
-    }, [])
 
-    useEffect(() => {
-        console.log(count)
-    }, [count])
+        setOption(userBills.map(() => true))
+    }, [])
 
   return (
     <div className="text-white w-full flex flex-col items-center">
@@ -101,17 +106,18 @@ const AddPositions = () => {
                         </div>
                         {/* del button/edit button */}
                         {
-                            option ? 
+                            !option[index] ? 
                             <RiDeleteBin6Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'/>
                             :
-                            <RiEdit2Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'  onClick={toggleOption}/>
+                            <RiEdit2Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'  onClick={() => toggleOption(index)}/>
                         }
                     </div>
 
                     {/* Item Container */}
                     {
-                        user.items.map((item, index) => (
-                            <div key={index} className='flex flex-col gap-1 mb-4'> 
+                        user.items.map(item => (
+                            <div key={item.id} 
+                                className={`flex flex-col gap-1 mb-4 ${!option[index] && `border-b-2 border-lightThree border-opacity-10`} py-1`}> 
                                 <h1> {item.itemName} </h1>
                                 <div className='flex justify-between text-xs font-light'>
                                     <div className='flex gap-6 text-lightFour'>
@@ -119,18 +125,33 @@ const AddPositions = () => {
                                         <p> {item.count}x </p>
                                     </div>
                                     {
-                                    option ?
-                                        <h4> ${item.price * item.count} </h4>
+                                    option[index] ?
+                                        <h4> ${item.price * item.num} </h4>
                                         :
-                                        <div className='flex items-center gap-2'> 
-                                            <button onClick={() => decrement(item.id, item.num)}> - </button>
+                                        <div className='flex items-center gap-2 bg-darkOne py-1 px-2 rounded-md'> 
+                                            <button onClick={() => handleCount(item.id, item.num, "minus")}> - </button>
                                             <p> {item.num} </p>
-                                            <button onClick={() => increment(item.id, item.num)}> + </button>
+                                            <button onClick={() => handleCount(item.id, item.num, "add")}> + </button>
                                         </div>
                                     }
                                 </div>
                             </div>
                         ))
+                    }
+                    {
+                        !option[index] && 
+                        <div className='flex flex-col items-start'> 
+                            <button className='bg-transparent text-primaryThree'> + Add position</button>
+                            <div className='flex items-center justify-between w-full'>
+                                <p className='text-sm'> Add {user.totalCount} selected items to the bill </p>
+                                <button 
+                                className='bg-primaryThree py-2 px-6 rounded-xl hover:bg-blue-600 duration-200 ease-in-out'
+                                onClick={() => toggleOption(index)}
+                                > 
+                                <FaCheck /> 
+                                </button>
+                            </div>
+                        </div>
                     }
                 </div>
             ))
