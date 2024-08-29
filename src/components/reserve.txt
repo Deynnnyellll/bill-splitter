@@ -1,0 +1,97 @@
+import guyProfile from '/src/assets/images/boy icon.png';
+import { RiDeleteBin6Fill, RiEdit2Fill } from "react-icons/ri";
+import { GoArrowLeft } from "react-icons/go";
+import { TiUserAdd } from "react-icons/ti";
+import { useState } from 'react';
+
+const AddPositions = () => {
+    // props should be an array of objects
+    const userBills = [
+        {
+            name: "Alex Clare",
+            items:
+            [
+            {itemName: "Cold Latte",
+            price: 300,
+            count: 3,},
+            ]
+        },
+        {
+            name: "Alex Clare",
+            items:
+            [
+            {
+                itemName: "Cold Latte",
+                price: 300,
+                count: 3,
+            },
+            {
+                itemName: "Burger",
+                price: 25,
+                count: 2
+            }
+            ],
+            price: 300,
+            count: 3,
+        },
+    ]
+
+    const name = "Alex Clare";
+    const item = "Cold Latte"
+    const price = 3000;
+    const count = 3;
+    let totalPrice = price * count;
+
+    const formattedPrice = new Intl.NumberFormat().format(price);
+    const formattedTotalPrice = new Intl.NumberFormat().format(totalPrice);
+
+    const [option, setOption] = useState(false);
+
+    const toggleOption = () => {
+        setOption(!option);
+    }
+
+  return (
+    <div className="text-white w-full flex flex-col items-center">
+        {/* header */}
+        <div className='flex justify-between items-center w-[95%] my-6'>
+            <GoArrowLeft  className='text-[18px]'/>
+            <h1> Add Positions </h1>
+            <TiUserAdd className='text-[18px]'/>
+        </div>
+        <div className='bg-darkTwo flex flex-col w-[95%] rounded-2xl p-6 justify-between'>
+            <div className='flex justify-between mb-8'>
+                <div className='flex gap-4'>
+                    {/* image */}
+                    <img src={guyProfile} alt="profile icon"  className='w-[40px] h-[40px]'/>
+                    {/* add positions to member */}
+                    <h3 className='leading-tight'>
+                        Add positions to <br /> {name}
+                    </h3>                
+                </div>
+                {/* del button/edit button */}
+                {
+                    !option ? 
+                    <RiDeleteBin6Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'/>
+                    :
+                    <RiEdit2Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree' />
+                }
+            </div>
+
+            {/* Items */}
+            <div className='flex flex-col gap-1'>
+                <h1> {item} </h1>
+                <div className='flex justify-between text-xs font-light'>
+                    <div className='flex gap-6 text-lightFour'>
+                        <p> ${formattedPrice} </p>
+                        <p> {count}x </p>
+                        </div>
+                    <h4> ${formattedTotalPrice} </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+  )
+}
+
+export default AddPositions
