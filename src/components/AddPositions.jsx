@@ -5,7 +5,8 @@ import { GoArrowLeft } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
+import useFetch from '../custom hooks/useFetch';
 
 const AddPositions = () => {
     // props should be an array of objects
@@ -54,9 +55,11 @@ const AddPositions = () => {
     const handleCount = (id, num, method) => {
         if(method === "add") {
             setCount(count.map(item => (
-                {...item,
-                    items: item.items.map(item => (item.id === id ? {...item, 
-                        num: item.count > num ? num+1 : num
+                {
+                    ...item,
+                    items: item.items.map(item => (item.id === id ? {
+                        ...item,
+                        num: item.count > num ? num + 1 : num
                     } : item)),
                     totalCount: item.items.reduce((acc, item) => acc + item.num, 0)
                 }
@@ -64,9 +67,12 @@ const AddPositions = () => {
         }
         else {
             setCount(count.map(item => (
-                {...item,
-                    items: item.items.map(item => (item.id === id ? {...item, 
-                        num: num > 0 ? num-1 : num} : item)),
+                {
+                    ...item,
+                    items: item.items.map(item => (item.id === id ? {
+                        ...item,
+                        num: num > 0 ? num - 1 : num
+                    } : item)),
                     totalCount: item.items.reduce((acc, item) => acc + item.num, 0)
                 }
             )))
@@ -83,6 +89,14 @@ const AddPositions = () => {
 
         setOption(userBills.map(() => true))
     }, [])
+
+    // custom hook
+    const { data, getData } = useFetch();
+
+    function consoleData(url) {
+        getData(url);
+        console.log(data)
+    }
 
   return (
     <div className="text-white w-full flex flex-col items-center">
@@ -141,7 +155,7 @@ const AddPositions = () => {
                     {
                         !option[index] && 
                         <div className='flex flex-col items-start'> 
-                            <button className='bg-transparent text-primaryThree'> + Add position</button>
+                            <button className='bg-transparent text-primaryThree' onClick={() => consoleData('https://randomuser.me/api/')}> + Add position</button>
                             <div className='flex items-center justify-between w-full'>
                                 <p className='text-sm'> Add {user.totalCount} selected items to the bill </p>
                                 <button 
