@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GoArrowLeft } from "react-icons/go";
 import { TiUserAdd } from "react-icons/ti";
 import { v4 as uuidv4 } from 'uuid';
 import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 import Additem from './AddItem';
 import Items from './Items';
@@ -14,12 +15,27 @@ const CreateBill = () => {
   const [addList, setAddlist] = useState(false)
   const [receipt, setReceipt] = useState({
     title: '',
-    itemLists: null
+    items: null,
+    totalAmount: 0
   })
+  const receiptRef = useRef(false)
   const navigate = useNavigate()
 
   useEffect(() => {
-    localStorage.setItem('receipt', JSON.stringify(receipt))
+    receiptRef.current ? (
+      axios
+        .post('http://localhost:4000/home', receipt)
+        .then(res => {
+          setTimeout(() => {
+            navigate(`../receipt/${res.data._id}`)
+          }, 100)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    ) : (
+      receiptRef.current = true
+    )
   }, [receipt])
 
   const handleAddList = () => {
@@ -49,13 +65,20 @@ const CreateBill = () => {
 
   const handleSaveReceipt = (event) => {
     event.preventDefault();
+
+    let total = 0
+
+    itemLists.map((item) => {
+      total += item.amount * item.count
+    })
+
     setReceipt({
       title: title,
-      itemLists: itemLists
+      items: itemLists,
+      totalAmount: total
     })
-    setTimeout(() => {
-      navigate('../receipt')
-    }, 100)
+
+    receiptRef.current = receipt
   }
 
   return (
@@ -104,11 +127,13 @@ const CreateBill = () => {
           </button>
         )}
       </div>
-      {title && itemLists.length !== 0 ? (
-        <div className='mx-4 p-2 rounded-md bg-primaryThree text-center cursor-pointer select-none' onClick={handleSaveReceipt}>
-          Next
-        </div>
-      ) : null}
+      <div className='px-4'>
+        {title && itemLists.length !== 0 ? (
+          <button className='m-auto p-2 w-full rounded-md bg-primaryThree text-center cursor-pointer select-none' onClick={handleSaveReceipt}>
+            Next
+          </button>
+        ) : null}
+      </div>
     </div>
   )
 }

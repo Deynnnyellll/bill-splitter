@@ -11,22 +11,24 @@ import History from './components/History';
 import AddPositions from './components/AddPositions';
 
 function App() {
-  
+
 
   return (
     <>
       <Routes>
         <Route path='home'>
-          <Route path='' element={<Home />}/>
+          <Route path='' element={<Home />} />
           <Route path='create-bill' element={<CreateBill />} />
-          <Route path='receipt' element={<Receipt />} />
+          <Route path='receipt'>
+            <Route path=':ID' element={<Receipt />} />
+          </Route>
           <Route path='select-friends' element={<SelectFriends />} />
         </Route>
         <Route path='history'>
-          <Route path='' element={<History />}/>
+          <Route path='' element={<History />} />
         </Route>
         <Route path='add-position'>
-          <Route path='' element={<AddPositions />}/>
+          <Route path='' element={<AddPositions />} />
         </Route>
       </Routes>
       <Navbar />

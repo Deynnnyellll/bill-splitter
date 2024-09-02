@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 })
 
 // Get single Receipt from server
-router.get('/:id', async (req, res) => {
+router.get('/receipt/:id', async (req, res) => {
   try {
     let id = req.params.id
 
@@ -36,9 +36,9 @@ router.get('/:id', async (req, res) => {
 // Create a Receipt in server
 router.post('/', async (req, res) => {
   try {
-    let { title, items } = req.body
+    let { title, items, totalAmount } = req.body
 
-    let receipts = await Receipt.create({ title, items })
+    let receipts = await Receipt.create({ title, items, totalAmount })
     res.send(receipts).status(204);
   } catch(err) {
     console.log(err)

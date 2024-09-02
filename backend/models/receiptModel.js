@@ -10,7 +10,15 @@ const receiptSchema = new Schema({
   items: {
     type: Array,
     required: true
-  }
+  },
+  totalAmount: {
+    type: Number,
+    required: true
+  },
+  // countPersons: {
+  //   type: Number,
+  //   required: true
+  // }
 }, { timestamps: true})
 
 const Receipt = mongoose.model('receipts', receiptSchema)
