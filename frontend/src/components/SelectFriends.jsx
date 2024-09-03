@@ -56,7 +56,7 @@ const SelectFriends = () => {
   }
 
   const sendFriends = () => {
-    navigate('/add-position', { state: { selectedFriends: selectedFriends } })
+    navigate('/add-position', { state: selectedFriends })
   }
 
   return (

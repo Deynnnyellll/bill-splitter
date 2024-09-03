@@ -6,11 +6,36 @@ import { FaCheck } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import useFetch from '../custom hooks/useFetch';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+
 
 const AddPositions = () => {
     // props should be an array of objects
     const [count, setCount] = useState([]);
+    const location = useLocation();
+    const items = location.state;
+    const [positions, setPositions] = useState();
+
+    useEffect(() => {
+        getData();
+        console.log(positions)
+    }, [positions])
+
+    async function getData() {
+        if(!positions) {
+            try {
+                const data = await axios.get("http://localhost:4000/home");
+                setPositions(items.map(item => (
+                    {...item, itemList: data.data[0]}
+                )));
+            }
+            catch(err) {
+                console.error(err)
+            }
+        }
+    }
+
     const userBills = [
         {
             name: "Alex Clare",
@@ -90,14 +115,6 @@ const AddPositions = () => {
         setOption(userBills.map(() => true))
     }, [])
 
-    // custom hook
-    const { data, getData } = useFetch();
-
-    function consoleData(url) {
-        getData(url);
-        console.log(data)
-    }
-
   return (
     <div className="text-white w-full flex flex-col items-center">
         {/* header */}
@@ -155,7 +172,7 @@ const AddPositions = () => {
                     {
                         !option[index] && 
                         <div className='flex flex-col items-start'> 
-                            <button className='bg-transparent text-primaryThree' onClick={() => consoleData('https://randomuser.me/api/')}> + Add position</button>
+                            <button className='bg-transparent text-primaryThree'> + Add position</button>
                             <div className='flex items-center justify-between w-full'>
                                 <p className='text-sm'> Add {user.totalCount} selected items to the bill </p>
                                 <button 
