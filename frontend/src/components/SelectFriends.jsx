@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { GoArrowLeft, GoX, GoSearch } from "react-icons/go";
 import { TiUserAdd } from "react-icons/ti";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 import { friends } from '../constants'
 
@@ -22,7 +23,7 @@ export const Circle = ({ friend, toggleAdded }) => {
 
 export const FriendTab = ({ friend, toggleAdded }) => {
   return (
-    <div className='flex justify-between items-center my-4 text-lightOne'>
+    <div className='flex justify-between items-center my-2 text-lightOne'>
       <div className='flex items-center gap-4'>
         <div className='bg-darkTwo rounded-full h-12 w-12 flex justify-center items-center relative'>
           {friend.name.charAt(0)}
@@ -40,12 +41,22 @@ export const FriendTab = ({ friend, toggleAdded }) => {
 
 const SelectFriends = () => {
   const [friendList, setFriendsList] = useState(friends)
+  const [selectedFriends, setSelectedFriends] = useState([])
   const [inputSearch, setInputSearch] = useState('')
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    setSelectedFriends(friendList.filter((friend) => friend.added !== false))
+  }, [friendList])
 
   const handleAddFriend = (id) => {
     setFriendsList(friendList.map((friend) => (
       friend.id === id ? { ...friend, added: !friend.added } : friend
     )))
+  }
+
+  const sendFriends = () => {
+    navigate('/add-position', { state: { selectedFriends: selectedFriends } })
   }
 
   return (
@@ -87,12 +98,13 @@ const SelectFriends = () => {
             <input type="text" placeholder='Find friends' className='bg-transparent text-[14px] outline-none' onChange={(event) => setInputSearch(event.target.value)} />
           </div>
         </span>
-        <ul className='py-2 mb-10'>
-          {friendList.filter((friend) => {
-            return inputSearch.toLowerCase() === '' ? 
-              friend :
-              friend.name.toLowerCase().includes(inputSearch.toLowerCase())
-          }).map((friend) => (
+        <div className='mb-14'>
+          <ul className='py-2'>
+            {friendList.filter((friend) => {
+              return inputSearch.toLowerCase() === '' ?
+                friend :
+                friend.name.toLowerCase().includes(inputSearch.toLowerCase())
+            }).map((friend) => (
               <li key={friend.id}>
                 <FriendTab
                   friend={friend}
@@ -100,7 +112,13 @@ const SelectFriends = () => {
                 />
               </li>
             ))}
-        </ul>
+          </ul>
+          {selectedFriends.length !== 0 ? (
+            <button className='p-2 w-full rounded-md bg-primaryThree text-center text-white cursor-pointer select-none' onClick={sendFriends}>
+              Next
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   )
