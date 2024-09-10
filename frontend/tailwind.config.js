@@ -15,6 +15,9 @@ export default {
         lightThree: '#F3F3F5',
         lightFour: '#F3EEFF'
       },
+      backgroundImage : {
+        'billSplit': "url('/frontend/src/assets/images/bill-split.png')"
+      },
       fontFamily: {
         signika: ["Signika", 'sans-serif']
       }

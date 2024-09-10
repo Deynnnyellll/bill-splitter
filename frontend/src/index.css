@@ -34,3 +34,7 @@ hr {
   background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/23618/rip.svg) bottom;
   background-size: 200%;
 }
+
+.bg {
+  background: url(/assets/images/bill-split.png);
+}

@@ -9,6 +9,7 @@ import Receipt from './components/Receipt'
 import SelectFriends from './components/SelectFriends'
 import History from './components/History';
 import AddPositions from './components/AddPositions';
+import SendingReceipt from './components/SendingReceipt';
 
 function App() {
 
@@ -29,6 +30,8 @@ function App() {
         </Route>
         <Route path='add-position'>
           <Route path='' element={<AddPositions />} />
+          <Route path='sending-receipt' element={<SendingReceipt  className="mt-10"/>} />
+
         </Route>
       </Routes>
       <Navbar />
