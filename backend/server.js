@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 
 import receiptsRoute from "./routes/receipts.js";
+import usersRoute from "./routes/users.js"
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors());
 
 // routes for receipts
 app.use("/home", receiptsRoute);
+app.use("/user", usersRoute);
 
 // connect to database
 mongoose

@@ -3,15 +3,17 @@ import React, { useEffect, useState } from 'react'
 import { CiReceipt } from "react-icons/ci";
 import axios from "axios";
 // import useFetch from '../custom hooks/useFetch';
+import { useAuthContext } from '../custom hooks/useAuthContext';
 
 const Bills = () => {
   const [receipts, setReceipts] = useState([])
   const months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", 
     "July", "Aug", "Sep", "Oct", "Nov", "Dec" ]
+  const { user } = useAuthContext()
 
   useEffect(() => {
     axios
-      .get('http://localhost:4000/home')
+      .get('http://localhost:4000/home', { headers: { 'Authorization': `Bearer ${user.token}` } })
       .then(res => {
         setReceipts(res.data)
       })

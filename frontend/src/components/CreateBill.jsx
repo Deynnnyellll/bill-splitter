@@ -8,6 +8,7 @@ import axios from 'axios';
 import Additem from './AddItem';
 import Items from './Items';
 import EditItem from './EditItem';
+import { useAuthContext } from '../custom hooks/useAuthContext';
 
 const CreateBill = () => {
   const [itemLists, setItemLists] = useState([])
@@ -20,11 +21,12 @@ const CreateBill = () => {
   })
   const receiptRef = useRef(false)
   const navigate = useNavigate()
+  const { user } = useAuthContext()
 
   useEffect(() => {
     receiptRef.current ? (
       axios
-        .post('http://localhost:4000/home', receipt)
+        .post('http://localhost:4000/home', receipt, { headers: { 'Authorization': `Bearer ${user.token}` } })
         .then(res => {
           setTimeout(() => {
             navigate(`../receipt/${res.data._id}`)

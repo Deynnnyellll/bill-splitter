@@ -5,11 +5,13 @@ import axios from 'axios'
 import { GoArrowLeft } from "react-icons/go";
 import { TiUserAdd } from "react-icons/ti";
 import { RiEdit2Fill } from "react-icons/ri";
+import { useAuthContext } from '../custom hooks/useAuthContext';
 
 const Receipt = () => {
   const [receipt, setReceipt] = useState(null)
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "June",
     "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const { user } = useAuthContext()
 
   const params = useParams()
   const receiptID = params.ID
@@ -25,9 +27,8 @@ const Receipt = () => {
   }
 
   useEffect(() => {
-    console.log("here")
     axios
-      .get(`http://localhost:4000/home/receipt/${receiptID}`)
+      .get(`http://localhost:4000/home/receipt/${receiptID}`, { headers: { 'Authorization': `Bearer ${user.token}` } })
       .then(res => {
         setReceipt(res.data)
       })
