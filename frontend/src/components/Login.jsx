@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useSignUpLogin } from '../custom hooks/useSignUpLogin';
 import axios from 'axios';
 
@@ -7,11 +7,10 @@ import { IoMdMail } from "react-icons/io";
 import { CiSquareChevUp, CiSquareChevDown } from "react-icons/ci";
 import { TbEye, TbEyeOff } from "react-icons/tb";
 
-export const LoginType = ({ passType, passRef, error, setEmail, setPassword, handleToggleSee, handleLoginSubmit }) => {
+export const LoginType = ({ passType, passRef, error, loading, setEmail, setPassword, handleToggleSee, handleLoginSubmit }) => {
 
   return (
     <>
-      {error && <h1>{error}</h1>}
       <h1 className='text-[24px]'>Let's split your Bill</h1>
       <div className='flex items-center w-full bg-darkTwo rounded-md' >
         <span className='mx-3'>
@@ -39,12 +38,19 @@ export const LoginType = ({ passType, passRef, error, setEmail, setPassword, han
             <TbEye className='text-[18px]' />}
         </span>
       </div >
-      <button className='bg-primaryThree w-full py-2 rounded-lg' onClick={handleLoginSubmit}>Login</button>
+      <button className='bg-primaryThree w-full py-2 rounded-lg' onClick={handleLoginSubmit} disabled={loading}>Login</button>
+      {error && (
+        <div className='absolute -bottom-14 w-full text-center py-2 border-red-600 border-2 rounded-md bg-darkTwo'>
+          <h1 className='text-[14px]'>
+            {error}
+          </h1>
+        </div>
+      )}
     </>
   )
 }
 
-export const SignupType = ({ passType, passRef, error, setEmail, setPassword, setUsername, handleToggleSee, handleSignupSubmit }) => {
+export const SignupType = ({ passType, passRef, error, loading, setEmail, setPassword, setUsername, handleToggleSee, handleSignupSubmit }) => {
 
   return (
     <>
@@ -85,13 +91,21 @@ export const SignupType = ({ passType, passRef, error, setEmail, setPassword, se
             <TbEye className='text-[18px]' />}
         </span>
       </div >
-      <button className='bg-primaryThree w-full py-2 rounded-lg' onClick={handleSignupSubmit}>Sign up</button>
-      {error && <h1>{error}</h1>}
+      <button className='bg-primaryThree w-full py-2 rounded-lg' onClick={handleSignupSubmit} disabled={loading}>Sign up</button>
+      {error && (
+        <div className='absolute -bottom-14 w-full text-center py-2 border-red-600 border-2 rounded-md bg-darkTwo'>
+          <h1 className='text-[14px]'>
+            {error}
+          </h1>
+        </div>
+      )}
     </>
   )
 }
 
 const Login = () => {
+  const { signup, login, loading, error, setError } = useSignUpLogin()
+
   const [loginState, setLoginState] = useState('signup')
   const [passType, setPassType] = useState('password')
   const [username, setUsername] = useState('')
@@ -99,14 +113,13 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const passRef = useRef(null)
 
-  const { signup, login, loading, error } = useSignUpLogin()
-
   const ovalMoving = loginState === 'login' ? 'after:translate-y-[117%]' : ''
   const signMoving = loginState === 'login' ? '-translate-y-[70%] opacity-0' : ''
   const loginMoving = loginState === 'login' ? 'translate-y-[200px]' : 'opacity-0 translate-y-[110%]'
-  const formMoving = loginState === 'login' ? 'translate-y-[50px]' : 'translate-y-[220px]'
+  const formMoving = loginState === 'login' ? 'translate-y-[50px]' : 'translate-y-[210px]'
 
   const handleSwitchLogin = () => {
+    setError(null)
     setLoginState(prev => prev === 'signup' ? 'login' : 'signup')
   }
 
@@ -132,12 +145,13 @@ const Login = () => {
           <p className='text-[12px]'>Login to access your account and continue splitting your bills.</p>
           <CiSquareChevUp className='text-[36px] mt-2' onClick={handleSwitchLogin} />
         </div>
-        <div className={`grid grid-rows-4 w-full gap-5 z-0 ${formMoving} duration-1000 `}>
+        <div className={`grid grid-rows-4 w-full gap-4 z-0 ${formMoving} duration-1000 `}>
           {loginState === 'login' ?
             <LoginType
               passRef={passRef}
               passType={passType}
               error={error}
+              loading={loading}
               setEmail={setEmail}
               setPassword={setPassword}
               handleToggleSee={handleToggleSee}
@@ -146,6 +160,7 @@ const Login = () => {
               passRef={passRef}
               passType={passType}
               error={error}
+              loading={loading}
               setUsername={setUsername}
               setEmail={setEmail}
               setPassword={setPassword}

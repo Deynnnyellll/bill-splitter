@@ -61,5 +61,5 @@ export const useSignUpLogin = () => {
       })
   }
 
-  return { signup, login, loading, error }
+  return { signup, login, loading, error, setError }
 }

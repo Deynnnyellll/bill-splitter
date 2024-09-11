@@ -7,8 +7,8 @@ import { useAuthContext } from '../custom hooks/useAuthContext';
 
 const Bills = () => {
   const [receipts, setReceipts] = useState([])
-  const months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", 
-    "July", "Aug", "Sep", "Oct", "Nov", "Dec" ]
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "June",
+    "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
   const { user } = useAuthContext()
 
   useEffect(() => {
@@ -36,6 +36,11 @@ const Bills = () => {
         <p className='text-[14px]'>Recent bills</p>
         <p className='text-[12px] text-primaryThree cursor-pointer'>See all</p>
       </span>
+      {receipts.length === 0 && (
+        <div className='w-full my-4 text-center py-2'>
+          <h1 className='text-[12px] italic'>Oh! you dont have recent bills, Add now!</h1>
+        </div>
+      )}
       <ul className='my-4 mb-[52px]'>
         {receipts.map((receipt) => (
           <li
