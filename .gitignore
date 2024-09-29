@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+backend/.env 
 .env                # loaded in all cases
 .env.local          # loaded in all cases, ignored by git

@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import './index.css'
+import { Navigate } from 'react-router-dom'
+import { useAuthContext } from './custom hooks/useAuthContext'
 
 // Routes
 import Home from './components/Home'
@@ -9,16 +11,18 @@ import Receipt from './components/Receipt'
 import SelectFriends from './components/SelectFriends'
 import History from './components/History';
 import AddPositions from './components/AddPositions';
+import Login from './components/Login'
 import SendingReceipt from './components/SendingReceipt';
 
 function App() {
-
+  const { user } = useAuthContext()
 
   return (
     <>
       <Routes>
+        <Route path='login' element={!user ? <Login /> : <Navigate to='/home' /> } />
         <Route path='home'>
-          <Route path='' element={<Home />} />
+          <Route path='' element={user ? <Home /> : <Navigate to='/login' />} />
           <Route path='create-bill' element={<CreateBill />} />
           <Route path='receipt'>
             <Route path=':ID' element={<Receipt />} />
@@ -34,7 +38,7 @@ function App() {
 
         </Route>
       </Routes>
-      <Navbar />
+      {/* <Navbar /> */}
     </>
   )
 }

@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 
 import receiptsRoute from "./routes/receipts.js";
+import usersRoute from "./routes/users.js"
 import billRoute from "./routes/bill.js";
 
 dotenv.config();
@@ -16,9 +17,6 @@ app.use(cors());
 
 // routes for receipts
 app.use("/home", receiptsRoute);
-
-// routes for bill split
-app.use("/bill", billRoute)
 
 // connect to database
 mongoose
