@@ -10,10 +10,10 @@ import { FaCheck } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 
 const SendingReceipt = () => {
-    const location = useLocation()
-    const { positions, itemList } = location.state
-    const receipt = itemList
-    console.log(receipt)
+    const location = useLocation();
+    const { positions, itemList, originalItems } = location.state;
+    const receipt = itemList;
+    console.log(originalItems.items[0]);
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "June",
         "July", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -37,7 +37,7 @@ const SendingReceipt = () => {
         console.log(res.data)
         setTimeout(() => {
           setIsSent(prevState => !prevState)
-        }, 3000)
+        }, 30)
       })
       .catch(err => {
         console.error(err)
@@ -47,7 +47,7 @@ const SendingReceipt = () => {
 
 
   return (
-    <div className={`bg-primaryThree text-lightOne ${isSent ? 'h-auto' : 'h-[110vh]'}`}>
+    <div className={`bg-primaryThree text-lightOne ${isSent ? 'min-h-[110vh]' : 'h-[110vh]'}`}>
       {receipt ? (
       <div className='mb-16'>
         <div className='flex justify-between items-center p-4'>
@@ -72,8 +72,8 @@ const SendingReceipt = () => {
         {/* lower container */}
         {
         isSent ? 
-        <>
-          <div className='rounded-[20px] mx-3 mt-3 pt-4 px-5 bg-lightOne text-darkOne'>
+        <div className='w-full flex flex-col items-center'>
+          <div className='rounded-[20px] w-[95%] mx-3 mt-3 pt-4 px-5 bg-lightOne text-darkOne'>
             <div className='flex justify-between items-center'>
               <div className='flex items-center gap-2'>
                 <div className='rounded-full py-3 px-4 bg-primaryOne font-semibold text-lightOne text-[14px]'>
@@ -94,34 +94,33 @@ const SendingReceipt = () => {
             {/* list of items */}
             <ul>
               {
-                itemList.items.map(item => (
+                itemList.items.map((item, index) => (
                   <li key={item.id}>
                     <h4 className='font-semibold'> {item.name} </h4>
-                    <ul className='flex items-center justify-cente gap-1'>
-                      {
-                        positions.map(position => (
-                          position.itemList.items.map(item1 => (
-                            item1.name === item.name && item1.count !== 0 && (
-                              <li key={item1.id} className='bg-primaryOne rounded-full text-lightOne px-2 py-1 w-6 h-6 text-sm text-center'>{position.name.charAt(0)}</li>
-                            )
+                    <ul className='flex items-center justify-between gap-1'>
+                      <div className='flex gap-2'>
+                        {
+                          positions.map(position => (
+                            position.itemList.items.map(item1 => (
+                              item1.name === item.name && item1.count !== 0 && (
+                                <li key={item1.id} className='flex flex-col items-center'>
+                                  <p className='bg-primaryOne rounded-full text-lightOne px-2 py-1 w-6 h-6 text-sm text-center'> {position.name.charAt(0)} </p>
+                                  <p className='text-primaryTwo'> {item1.count}x </p>
+                                </li>
+                              )
+                            ))
                           ))
-                        ))
-                      }
-                    </ul>
-                    <div className='flex items-center justify-between'>
-                      <div className='text-primaryTwo'>
-                        <p className='inline-block mr-4'> ${item.amount}</p>
-                        <p className='inline-block'> {item.count}x </p>
+                        }
                       </div>
-                      <p> $ {item.amount * item.count} </p>
-                    </div>
+                      <p> $ {originalItems.items[index].amount * originalItems.items[index].count} </p>
+                    </ul>
                   </li>
                 ))
               }
             </ul>
             <hr className='mt-8'/>
           </div>
-          <div className='relative rounded-t-[20px] mx-3 pt-4 pb-6 px-5 bg-lightOne text-darkOne ripped-paper'>
+          <div className='relative w-[95%] rounded-t-[20px] mx-3 pt-4 pb-6 px-5 bg-lightOne text-darkOne ripped-paper'>
             <ul className='text-[12px] font-semibold'>
               <li className='flex justify-between'>
                 <p className='text-[#b7bac2]'>Subtotal</p>
@@ -137,7 +136,7 @@ const SendingReceipt = () => {
               </li>
             </ul>
           </div>
-        </> : 
+        </div> : 
         <div className='bg-lightOne w-[95%] h-[350px] rounded-[20px] mx-auto mt-4 p-4 flex flex-col justify-between'>
 
           <div className='my-auto h-[90%] flex flex-col justify-between animate-pulse'>

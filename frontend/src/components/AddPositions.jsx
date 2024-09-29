@@ -1,11 +1,10 @@
 import guyProfile from '/src/assets/images/boy icon.png';
-import girlProfile from '/src/assets/images/girl icon.png';
+// import girlProfile from '/src/assets/images/girl icon.png';
 import { RiDeleteBin6Fill, RiEdit2Fill } from "react-icons/ri";
 import { GoArrowLeft } from "react-icons/go";
 import { FaCheck } from "react-icons/fa";
 import { TiUserAdd } from "react-icons/ti";
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
@@ -17,15 +16,22 @@ const AddPositions = () => {
     const [positions, setPositions] = useState();
     const [prep, setPrep] = useState();
     const [option, setOption] = useState([]);
+    const [totalCount, setTotalCount] = useState();
+    const [globalItem, setGlobalItem] = useState();
+    const [originalPos, setOriginalPos] = useState();
     const [nothing, setNothing] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         getData();
-        console.log(positions);
+        console.log(originalPos);
         if(prep === true){
             assignTotalCount();
+        }
+
+        if(!totalCount && positions) {
+            setTotalCount(positions[0].itemList.totalCount);
         }
 
     }, [positions])
@@ -34,10 +40,12 @@ const AddPositions = () => {
         if(!positions) {
             try {
                 const data = await axios.get("http://localhost:4000/home");
-                const currentData = data.data[0]
+                const currentData = data.data[0];
+                setGlobalItem(currentData.items.map(item => ({...item, origCount: item.count})));
                 setPositions(items.map(item => (
                     {...item, itemList: currentData}
                 )));
+                setOriginalPos(currentData);
                 setPrep(true);
             }
             catch(err) {
@@ -53,7 +61,7 @@ const AddPositions = () => {
                     itemList: {
                         ...position.itemList, totalCount: position.itemList.items.reduce((acc, item) => parseInt(acc) + parseInt(item.count), 0),
                         items: position.itemList.items.map(item => (
-                            {...item, origCount: item.count}
+                            {...item, count: 0}
                         ))
                     }
                 }
@@ -66,42 +74,61 @@ const AddPositions = () => {
     }
 
 
-    const toggleOption = (index) => {
+    function toggleOption(index) {
         setOption(option.map((option, i) => (i === index ? !option : option)))
     }
 
-    const handleCount = (index, id, num, method) => {
-        const number = parseInt(num);
-        setNothing(!nothing)
-        setPositions(positions.map(position => (position.id === index + 1 ?
-            {...position, 
-                itemList: {...position.itemList, items: position.itemList.items.map(item => (
-                    item.id === id ? {...item, count: method === "add" ? (number < item.origCount ? number + 1 : item.count) :  (number > 0 ? number - 1 : item.count)
-                        
-                    } : item
-                ))}
-            } : {...position, 
-                itemList: {...position.itemList, items: position.itemList.items.map(item => (
-                    item.id === id ? {...item, count: method === "add" ? (number < item.origCount ? number - 1 : item.count) :  (number > 0 ? number + 1 : item.count)
-                        
-                    } : item
-                ))}
-            }
-        )))
+
+    function handleIncrementDecrement(id, name, method, number) {
+        try {
+            const globalObj = handleGlobal(method, name);
+            console.log(globalObj.count);
+            console.log(globalObj.origCount);
+            setPositions(positions.map(position => (position.id === id ?
+                {...position, 
+                    itemList: {...position.itemList, items: position.itemList.items.map(item => (
+                        item.name === name 
+                        ? {...item, 
+                                count: method === "add" 
+                                ? (globalObj.count > 0 ? parseInt(number) + 1 : item.count) 
+                                : (globalObj.count < globalObj.origCount ? parseInt(number) - 1 : item.count)  
+                            } 
+                        : item
+                    ))}
+                } : position
+            )))
+            
+
+            console.log(positions);
+        }
+        catch(err) {
+            console.error(err);
+        }
+    }
+
+    function handleGlobal(method, name) {
+        setGlobalItem(globalItem.map(item => (item.name === name 
+            ?   {...item, count: method === "add" 
+                    ? (item.count > 0 ? item.count - 1 : item.count) 
+                    : (item.origCount > item.count ? parseInt(item.count) + 1 : item.count)
+                } 
+            : item)));
+
+        const globalObj = globalItem.find(item => item.name === name);
+        setNothing(!nothing);
+
+        return globalObj;
+    }
+
+    function handleDelete(id) {
+        setPositions(positions.filter(position => position.id !== id));
+        setOption(positions.map(() => true));
         console.log(positions)
     }
 
-    useEffect(() => {
-        if(positions) {
-            setPositions(positions.map(position => (
-                {...position, 
-                    itemList: {
-                        ...position.itemList, totalCount: position.itemList.items.reduce((acc, item) => parseInt(acc) + parseInt(item.count), 0)
-                    }
-                }
-            )))
-        }
-    },[nothing])
+    function makeAReceipt() {
+        navigate('sending-receipt', { state: {positions: positions, itemList: positions[0].itemList, originalItems: originalPos} });
+    }
 
   return (
     <div>
@@ -115,7 +142,7 @@ const AddPositions = () => {
             </div>
             {
                 positions.map((user, index) => (
-                    <div key={index} className='bg-darkTwo flex flex-col w-[95%] rounded-2xl p-6 justify-between mb-8'> 
+                    <div key={user.id} className='bg-darkTwo flex flex-col w-[95%] rounded-2xl p-6 justify-between mb-8'> 
                         <div className='flex justify-between mb-8'>
                             <div className='flex gap-4'>
                                 {/* image */}
@@ -128,14 +155,14 @@ const AddPositions = () => {
                             {/* del button/edit button */}
                             {
                                 !option[index] ? 
-                                <RiDeleteBin6Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'/>
+                                <RiDeleteBin6Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree' onClick={() => handleDelete(user.id)}/>
                                 :
                                 <RiEdit2Fill size={30} className='p-2 bg-darkThree rounded-lg text-lightThree'  onClick={() => toggleOption(index)}/>
                             }
                         </div>
 
                         {/* Item Container */}
-                        {
+                        { user &&
                             user.itemList.items.map(item => (
                                 <div key={item.id} 
                                     className={`flex flex-col gap-1 mb-4 ${!option[index] && `border-b-2 border-lightThree border-opacity-10`} py-1`}> 
@@ -150,9 +177,9 @@ const AddPositions = () => {
                                             <h4> ${item.amount * item.count} </h4>
                                             :
                                             <div className='flex items-center gap-2 bg-darkOne py-1 px-2 rounded-md'> 
-                                                <button onClick={() => handleCount(index, item.id, item.count, "minus")}> - </button>
+                                                <button onClick={() => handleIncrementDecrement(user.id, item.name, "minus", item.count)}> - </button>
                                                 <p> {item.count} </p>
-                                                <button onClick={() => handleCount(index, item.id, item.count, "add")}> + </button>
+                                                <button onClick={() => handleIncrementDecrement(user.id, item.name, "add", item.count)}> + </button>
                                             </div>
                                         }
                                     </div>
@@ -164,9 +191,8 @@ const AddPositions = () => {
                             <div className='flex flex-col items-start'> 
                                 <button className='bg-transparent text-primaryThree'> + Add position</button>
                                 <div className='flex items-center justify-between w-full'>
-                                    <p className='text-sm'> Add {user.itemList.totalCount} selected items to the bill </p>
                                     <button 
-                                    className='bg-primaryThree py-2 px-6 rounded-xl hover:bg-blue-600 duration-200 ease-in-out'
+                                    className='bg-primaryThree py-2 px-6 rounded-xl hover:bg-blue-600 duration-200 ease-in-out mt-4'
                                     onClick={() => toggleOption(index)}
                                     > 
                                     <FaCheck /> 
@@ -177,7 +203,7 @@ const AddPositions = () => {
                     </div>
                 ))
             }
-            <button className='w-[95%] bg-primaryThree p-2 rounded-lg mb-16' onClick={() => navigate('sending-receipt', { state: {positions: positions, itemList: positions[0].itemList} })}> Next </button>
+            <button className='w-[95%] bg-primaryThree p-2 rounded-lg mb-16' onClick={makeAReceipt}> Next </button>
         </div>
         :
         <div className='text-white'> 
